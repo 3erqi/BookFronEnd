@@ -1,8 +1,0 @@
-[build]
-  publish = "dist/book-frontend/browser"
-  command = "npm run build:netlify"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
