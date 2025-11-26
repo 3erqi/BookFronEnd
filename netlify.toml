@@ -1,0 +1,9 @@
+[build]
+  base = "book-frontend"
+  publish = "dist/book-frontend/browser"
+  command = "npm run build:static"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

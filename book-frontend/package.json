@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "build:netlify": "ng build --configuration=netlify",
+    "build:static": "ng build --configuration=production --output-mode=static",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:book-frontend": "node dist/book-frontend/server/server.mjs"
