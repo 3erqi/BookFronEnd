@@ -7,7 +7,7 @@ import { Book } from '../models/book.model';
   providedIn: 'root'
 })
 export class BookService {
-  private apiUrl = 'http://localhost:5156/api/books';
+  private apiUrl = 'https://unsparkling-angela-clashingly.ngrok-free.dev/api/books';
 
   constructor(
     private http: HttpClient

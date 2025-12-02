@@ -9,7 +9,7 @@ import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/use
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5156/api/auth';
+  private apiUrl = 'https://unsparkling-angela-clashingly.ngrok-free.dev/api/auth';
   private tokenSubject = new BehaviorSubject<string | null>(this.getToken());
   private userSubject = new BehaviorSubject<User | null>(this.getUser());
 

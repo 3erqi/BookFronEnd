@@ -7,7 +7,7 @@ import { Quote, QuoteDto } from '../models/quote.model';
   providedIn: 'root'
 })
 export class QuoteService {
-  private apiUrl = 'http://localhost:5156/api/quotes';
+  private apiUrl = 'https://unsparkling-angela-clashingly.ngrok-free.dev/api/quotes';
 
   constructor(
     private http: HttpClient
