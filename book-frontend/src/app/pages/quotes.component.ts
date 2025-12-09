@@ -1,37 +1,44 @@
-// Import necessary Angular modules and services
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common'; // For *ngIf, *ngFor directives
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms'; // For form handling
-import { Router, RouterModule } from '@angular/router'; // For navigation
-import { QuoteService } from '../services/quote.service'; // API service for quote operations
-import { AuthService } from '../services/auth.service'; // Authentication service
-import { Quote } from '../models/quote.model'; // Quote data model
-import { Subscription } from 'rxjs'; // For managing observables
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { QuoteService } from '../services/quote.service';
+import { AuthService } from '../services/auth.service';
+import { ThemeService } from '../services/theme.service';
+import { Quote } from '../models/quote.model';
+import { Subscription } from 'rxjs';
 
 // Main quotes component - handles CRUD operations for user quotes
 @Component({
-  selector: 'app-quotes', // Component selector for HTML usage
-  standalone: true, // New Angular standalone component architecture
-  imports: [CommonModule, ReactiveFormsModule, RouterModule], // Required modules
+  selector: 'app-quotes',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   template: `
-    <!-- Top navigation bar with success theme -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-      <div class="container">
-        <a class="navbar-brand" href="#" (click)="navigateHome()">
-          <i class="fas fa-quote-left me-2"></i>Quote Manager
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success" style="background-color: #198754 !important; color: white !important;">
+      <div class="container-fluid" 
+           style="background-color: #198754 !important;">
+        <a class="navbar-brand" href="#" (click)="navigateHome()" style="color: white !important;">
+          <i class="fas fa-book me-2" style="color: white !important;"></i>Book Manager
         </a>
         
         <div class="navbar-nav ms-auto">
-          <a class="nav-link" routerLink="/books" routerLinkActive="active">
-            <i class="fas fa-book me-1"></i>Böcker
+          <a class="nav-link" routerLink="/books" routerLinkActive="active" style="color: white !important;">
+            <i class="fas fa-book me-1" style="color: white !important;"></i>Mina Böcker
           </a>
-          <a class="nav-link" routerLink="/quotes" routerLinkActive="active">
-            <i class="fas fa-quote-left me-1"></i>Mina Citat
+          <a class="nav-link" routerLink="/all-books" routerLinkActive="active" style="color: white !important;">
+            <i class="fas fa-library me-1" style="color: white !important;"></i>Alla Böcker
           </a>
-          <button class="btn btn-outline-light btn-sm ms-2" (click)="toggleTheme()">
-            <i [class]="isDarkTheme ? 'fas fa-sun' : 'fas fa-moon'"></i>
+          <a class="nav-link" routerLink="/quotes" routerLinkActive="active" style="color: white !important;">
+            <i class="fas fa-quote-left me-1" style="color: white !important;"></i>Mina Citat
+          </a>
+          <a class="nav-link" routerLink="/all-quotes" routerLinkActive="active" style="color: white !important;">
+            <i class="fas fa-quote-right me-1" style="color: white !important;"></i>Alla Citat
+          </a>
+          <button class="btn btn-outline-light btn-sm ms-2" (click)="toggleTheme()" style="color: white !important; border-color: white !important;">
+            <i [class]="isDarkTheme ? 'fas fa-sun' : 'fas fa-moon'" style="color: white !important;"></i>
           </button>
-          <button class="btn btn-outline-light btn-sm ms-2" (click)="logout()">
+          <button class="btn btn-outline-light btn-sm ms-2" (click)="logout()" style="color: white !important; border-color: white !important;">
             <i class="fas fa-sign-out-alt me-1"></i>Logga ut
           </button>
         </div>
@@ -274,69 +281,42 @@ import { Subscription } from 'rxjs'; // For managing observables
   `]
 })
 export class QuotesComponent implements OnInit, OnDestroy {
-  // Array to store all user quotes loaded from API
   quotes: Quote[] = [];
-  
-  // Reactive form for adding/editing quotes with validation
   quoteForm: FormGroup;
-  
-  // Currently selected quote for editing (null for new quotes)
   editingQuote: Quote | null = null;
-  
-  // Controls visibility of the add/edit form
   showForm = false;
-  
-  // Loading state for save operations to prevent double-submission
   isSaving = false;
-  
-  // Theme toggle state for light/dark mode
   isDarkTheme = false;
-  
-  // Loading state for initial quotes fetch
   isLoading = false;
-  
-  // Subscription to auth state changes for cleanup
   private authSubscription?: Subscription;
 
-  /**
-   * Constructor - Inject dependencies and initialize the reactive form
-   * Sets up form validation rules for quote text and author fields
-   */
   constructor(
-    private fb: FormBuilder, // For creating reactive forms
-    private router: Router, // For navigation between routes
-    private quoteService: QuoteService, // API service for quote CRUD operations
-    private authService: AuthService, // Authentication and token management
-    private cdr: ChangeDetectorRef // For manual change detection when needed
+    private fb: FormBuilder,
+    private router: Router,
+    private quoteService: QuoteService,
+    private authService: AuthService,
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
   ) {
-    // Initialize reactive form with validation rules
     this.quoteForm = this.fb.group({
-      text: ['', [Validators.required]], // Quote text is required
-      author: ['', [Validators.required]] // Author name is required
+      text: ['', [Validators.required]],
+      author: ['', [Validators.required]]
     });
   }
-
-  // Getter methods for easy access to form controls in template
   get text() { return this.quoteForm.get('text'); }
   get author() { return this.quoteForm.get('author'); }
-
-  /**
-   * Component initialization - runs after constructor
-   * Verifies user authentication and loads quotes data
-   * Sets up subscription to auth state changes for session persistence
-   */
   ngOnInit(): void {
-    // Check if user is authenticated - redirect to login if not
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
       return;
     }
     
-    // Load quotes immediately and also listen for auth state changes
+    this.themeService.isDarkTheme$.subscribe(isDark => {
+      this.isDarkTheme = isDark;
+    });
+    
     this.loadQuotes();
     
-    // Subscribe to auth state changes to reload data when user logs in
-    // This helps maintain data consistency across browser refreshes
     this.authSubscription = this.authService.token$.subscribe(token => {
       if (token && this.quotes.length === 0) {
         this.loadQuotes();
@@ -344,13 +324,7 @@ export class QuotesComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Loads user's quotes from the API
-   * Includes proper error handling and loading states
-   * Uses ChangeDetectorRef to ensure UI updates properly
-   */
   loadQuotes(): void {
-    // Double-check authentication before making API call
     if (!this.authService.isAuthenticated()) {
       console.log('Not authenticated, skipping quotes load');
       this.isLoading = false;
@@ -360,66 +334,49 @@ export class QuotesComponent implements OnInit, OnDestroy {
     
     console.log('Loading quotes...');
     this.isLoading = true;
-    this.cdr.detectChanges(); // Ensure loading spinner shows immediately
+    this.cdr.detectChanges();
     
-    // Make API call to fetch user's quotes
     this.quoteService.getQuotes().subscribe({
       next: (quotes) => {
         console.log('Quotes loaded successfully:', quotes);
-        this.quotes = quotes || []; // Handle null/undefined response
+        this.quotes = quotes || [];
         this.isLoading = false;
-        this.cdr.detectChanges(); // Force UI update
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading quotes:', error);
         this.isLoading = false;
-        this.quotes = []; // Clear quotes on error
-        this.cdr.detectChanges(); // Ensure error state is reflected in UI
+        this.quotes = [];
+        this.cdr.detectChanges();
       }
     });
   }
 
-  /**
-   * Shows the form for adding a new quote
-   * Resets form state and clears any existing edit data
-   */
   showAddForm(): void {
     this.showForm = true;
-    this.editingQuote = null; // Clear edit mode
-    this.quoteForm.reset(); // Clear form fields
+    this.editingQuote = null;
+    this.quoteForm.reset();
   }
 
-  /**
-   * Prepares form for editing an existing quote
-   * Populates form fields with current quote data
-   */
   editQuote(quote: Quote): void {
-    this.editingQuote = quote; // Set edit mode
-    this.showForm = true; // Show the form
-    // Populate form with existing quote data
+    this.editingQuote = quote;
+    this.showForm = true;
     this.quoteForm.patchValue({
       text: quote.text,
       author: quote.author
     });
   }
 
-  /**
-   * Handles form submission for both creating and updating quotes
-   * Includes validation, loading states, and proper error handling
-   * Updates local array and forces change detection for immediate UI updates
-   */
+  // Handles form submission for creating and updating quotes
   onSubmit(): void {
-    // Only proceed if form is valid and not already saving
     if (this.quoteForm.valid && !this.isSaving) {
-      this.isSaving = true; // Prevent double-submission
+      this.isSaving = true;
       const quoteData = this.quoteForm.value;
 
       if (this.editingQuote) {
-        // Update existing quote via API
         this.quoteService.updateQuote(this.editingQuote.id!, quoteData).subscribe({
           next: (updatedQuote) => {
             console.log('Quote update response:', updatedQuote);
-            // Find and update the quote in local array for immediate UI update
             const index = this.quotes.findIndex(q => q.id === this.editingQuote!.id);
             if (index !== -1) {
               this.quotes[index] = updatedQuote;
@@ -427,97 +384,71 @@ export class QuotesComponent implements OnInit, OnDestroy {
             }
             this.cancelEdit();
             this.isSaving = false;
-            this.cdr.detectChanges(); // Force UI update to show changes immediately
+            this.cdr.detectChanges();
           },
           error: (error) => {
             console.error('Error updating quote:', error);
-            this.isSaving = false; // Re-enable form submission
+            this.isSaving = false;
           }
         });
       } else {
-        // Create new quote via API
         this.quoteService.createQuote(quoteData).subscribe({
           next: (newQuote) => {
-            this.quotes.push(newQuote); // Add to local array for immediate UI update
+            this.quotes.push(newQuote);
             this.cancelEdit();
             this.isSaving = false;
-            this.cdr.detectChanges(); // Force UI update to show new quote immediately
+            this.cdr.detectChanges();
           },
           error: (error) => {
             console.error('Error creating quote:', error);
-            this.isSaving = false; // Re-enable form submission
+            this.isSaving = false;
           }
         });
       }
     }
   }
 
-  /**
-   * Deletes a quote after user confirmation
-   * Updates local array immediately for responsive UI
-   */
+  // Deletes a quote after user confirmation
   deleteQuote(id: number): void {
-    // Show Swedish confirmation dialog
     if (confirm('Är du säker på att du vill radera detta citat?')) {
       this.quoteService.deleteQuote(id).subscribe({
         next: () => {
           console.log(`Quote ${id} deleted successfully`);
-          // Remove from local array for immediate UI update
           this.quotes = this.quotes.filter(quote => quote.id !== id);
-          this.cdr.detectChanges(); // Force change detection to update UI
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error deleting quote:', error);
-          // Could add user-friendly error message here
         }
       });
     }
   }
 
-  /**
-   * Cancels the current edit operation
-   * Hides form and resets all form-related state
-   */
+  // Cancels the current edit operation
   cancelEdit(): void {
-    this.showForm = false; // Hide the form
-    this.editingQuote = null; // Clear edit mode
-    this.quoteForm.reset(); // Clear form fields and validation states
+    this.showForm = false;
+    this.editingQuote = null;
+    this.quoteForm.reset();
   }
 
-  /**
-   * Navigates back to the home page
-   * Used by the navbar brand click handler
-   */
+  // Navigates back to the home page
   navigateHome(): void {
     this.router.navigate(['/home']);
   }
 
-  /**
-   * Toggles between light and dark themes
-   * Applies theme class to document body for global styling
-   */
+  // Toggles between light and dark themes
   toggleTheme(): void {
-    this.isDarkTheme = !this.isDarkTheme;
-    // Apply CSS class to body for theme-specific styling
-    document.body.classList.toggle('dark-theme', this.isDarkTheme);
+    this.themeService.toggleTheme();
   }
 
-  /**
-   * Logs out the current user and redirects to login page
-   * Clears authentication tokens and session data
-   */
+  // Logs out the current user and redirects to login page
   logout(): void {
-    this.authService.logout(); // Clear tokens and user data
-    this.router.navigate(['/login']); // Redirect to login page
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
-  /**
-   * Component cleanup - runs when component is destroyed
-   * Unsubscribes from observables to prevent memory leaks
-   * Essential for proper resource management in Angular applications
-   */
+  // Component cleanup - unsubscribes from observables to prevent memory leaks
   ngOnDestroy(): void {
-    // Clean up subscription to prevent memory leaks
     this.authSubscription?.unsubscribe();
   }
 }

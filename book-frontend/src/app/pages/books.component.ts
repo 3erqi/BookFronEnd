@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { BookService } from '../services/book.service';
 import { AuthService } from '../services/auth.service';
+import { ThemeService } from '../services/theme.service';
 import { Book } from '../models/book.model';
 
 @Component({
@@ -11,21 +12,28 @@ import { Book } from '../models/book.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   template: `
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div class="container">
-        <a class="navbar-brand" href="#" (click)="navigateHome()">
-          <i class="fas fa-book me-2"></i>Book Manager
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="background-color: #0d6efd !important; color: white !important;">
+      <div class="container-fluid" 
+           style="background-color: #0d6efd !important;">
+        <a class="navbar-brand" href="#" (click)="navigateHome()" style="color: white !important;">
+          <i class="fas fa-book me-2" style="color: white !important;"></i>Book Manager
         </a>
         
         <div class="navbar-nav ms-auto">
-          <a class="nav-link" routerLink="/books" routerLinkActive="active">
-            <i class="fas fa-book me-1"></i>Böcker
+          <a class="nav-link" routerLink="/books" routerLinkActive="active" style="color: white !important;">
+            <i class="fas fa-book me-1" style="color: white !important;"></i>Mina Böcker
           </a>
-          <a class="nav-link" routerLink="/quotes" routerLinkActive="active">
-            <i class="fas fa-quote-left me-1"></i>Mina Citat
+          <a class="nav-link" routerLink="/all-books" routerLinkActive="active" style="color: white !important;">
+            <i class="fas fa-library me-1" style="color: white !important;"></i>Alla Böcker
           </a>
-          <button class="btn btn-outline-light btn-sm ms-2" (click)="toggleTheme()">
-            <i [class]="isDarkTheme ? 'fas fa-sun' : 'fas fa-moon'"></i>
+          <a class="nav-link" routerLink="/quotes" routerLinkActive="active" style="color: white !important;">
+            <i class="fas fa-quote-left me-1" style="color: white !important;"></i>Mina Citat
+          </a>
+          <a class="nav-link" routerLink="/all-quotes" routerLinkActive="active" style="color: white !important;">
+            <i class="fas fa-quote-right me-1" style="color: white !important;"></i>Alla Citat
+          </a>
+          <button class="btn btn-outline-light btn-sm ms-2" (click)="toggleTheme()" style="color: white !important; border-color: white !important;">
+            <i [class]="isDarkTheme ? 'fas fa-sun' : 'fas fa-moon'" style="color: white !important;"></i>
           </button>
           <button class="btn btn-outline-light btn-sm ms-2" (click)="logout()">
             <i class="fas fa-sign-out-alt me-1"></i>Logga ut
@@ -297,6 +305,7 @@ export class BooksComponent implements OnInit, OnDestroy {
     private router: Router,
     private bookService: BookService,
     private authService: AuthService,
+    private themeService: ThemeService,
     private cdr: ChangeDetectorRef
   ) {
     this.bookForm = this.fb.group({
@@ -314,6 +323,11 @@ export class BooksComponent implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
       return;
     }
+    
+    // Subscribe to theme changes
+    this.themeService.isDarkTheme$.subscribe(isDark => {
+      this.isDarkTheme = isDark;
+    });
     
     // Load books immediately
     this.loadBooks();
@@ -453,8 +467,7 @@ export class BooksComponent implements OnInit, OnDestroy {
   }
 
   toggleTheme(): void {
-    this.isDarkTheme = !this.isDarkTheme;
-    document.body.classList.toggle('dark-theme', this.isDarkTheme);
+    this.themeService.toggleTheme();
   }
 
   logout(): void {

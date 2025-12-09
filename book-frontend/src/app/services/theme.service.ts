@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -9,7 +10,7 @@ export class ThemeService {
   
   public isDarkTheme$ = this.isDarkTheme.asObservable();
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.applyTheme(this.isDarkTheme.value);
   }
 
@@ -17,19 +18,27 @@ export class ThemeService {
     const newTheme = !this.isDarkTheme.value;
     this.isDarkTheme.next(newTheme);
     this.applyTheme(newTheme);
-    localStorage.setItem('darkTheme', newTheme.toString());
+    
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('darkTheme', newTheme.toString());
+    }
   }
 
   private getStoredTheme(): boolean {
-    const stored = localStorage.getItem('darkTheme');
-    return stored ? JSON.parse(stored) : false;
+    if (isPlatformBrowser(this.platformId)) {
+      const stored = localStorage.getItem('darkTheme');
+      return stored ? JSON.parse(stored) : false;
+    }
+    return false; // Default to light theme on server
   }
 
   private applyTheme(isDark: boolean): void {
-    if (isDark) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
+    if (isPlatformBrowser(this.platformId)) {
+      if (isDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
     }
   }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ export class App implements OnInit {
   title = 'Book & Quote Manager';
   private authService = inject(AuthService);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
 
   ngOnInit() {
     // Initialize authentication state from localStorage

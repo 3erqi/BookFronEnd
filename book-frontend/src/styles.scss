@@ -10,75 +10,634 @@
 :root {
   --bg-color: #ffffff;
   --text-color: #212529;
+  --text-muted: #6c757d;
   --card-bg: #ffffff;
+  --card-border: #dee2e6;
   --border-color: #dee2e6;
-  --navbar-bg: #f8f9fa;
-  --btn-primary: #007bff;
+  --navbar-bg: #0d6efd;
+  --navbar-text: #ffffff;
+  --btn-primary: #0d6efd;
+  --btn-secondary: #6c757d;
+  --btn-outline-secondary: #6c757d;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+  --alert-info-bg: #d1ecf1;
+  --alert-info-border: #bee5eb;
+  --alert-info-text: #0c5460;
+
+  .navbar {
+    --bs-navbar-color: var(--navbar-text) !important;
+    --bs-navbar-hover-color: var(--navbar-text) !important;
+    --bs-navbar-active-color: var(--navbar-text) !important;
+    --bs-navbar-brand-color: var(--navbar-text) !important;
+    --bs-navbar-brand-hover-color: var(--navbar-text) !important;
+  }
+}
+
+html {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
 }
 
 [data-theme="dark"] {
-  --bg-color: #121212;
-  --text-color: #ffffff;
-  --card-bg: #1e1e1e;
-  --border-color: #333333;
-  --navbar-bg: #2d3748;
-  --btn-primary: #0d6efd;
+  --bg-color: #0d1117;
+  --text-color: #f0f6fc;
+  --text-muted: #8b949e;
+  --card-bg: #161b22;
+  --card-border: #30363d;
+  --border-color: #30363d;
+  --navbar-bg: #21262d;
+  --navbar-text: #f0f6fc;
+  --btn-primary: #238636;
+  --btn-secondary: #373e47;
+  --btn-outline-secondary: #6e7681;
+  --input-bg: #0d1117;
+  --input-border: #30363d;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.4);
+  --alert-info-bg: #0c2d48;
+  --alert-info-border: #1f6feb;
+  --alert-info-text: #79c0ff;
+  
+  // Cross-browser compatibility
+  color-scheme: dark;
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
   transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  
+  // Force browsers to respect our theme
+  &, &::before, &::after {
+    background-color: var(--bg-color) !important;
+  }
+  
+  // Override any conflicting styles
+  background-image: none !important;
+  background-attachment: initial !important;
+  background-repeat: initial !important;
+}
+
+// Enhanced dark mode support - ensure all main content areas use theme colors
+.container, .container-fluid {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+// Ensure main content wrapper gets proper styling
+main, .main-content {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  min-height: 100vh;
 }
 
 .card {
-  background-color: var(--card-bg);
-  border-color: var(--border-color);
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-color) !important;
+  box-shadow: 0 2px 10px var(--shadow) !important;
+  
+  &:hover {
+    box-shadow: 0 4px 15px var(--shadow-hover) !important;
+  }
+  
+  .card-body, .card-header, .card-footer {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--card-border);
+  }
 }
 
 .navbar {
   background-color: var(--navbar-bg) !important;
+  transition: background-color 0.3s ease !important;
+  
+  .navbar-brand, .nav-link, .navbar-text {
+    color: var(--navbar-text) !important;
+    transition: color 0.3s ease !important;
+  }
+  
+  .nav-link:hover, .nav-link:focus {
+    color: var(--navbar-text) !important;
+    opacity: 0.8;
+  }
+  
+  .navbar-nav .nav-link.active {
+    color: var(--navbar-text) !important;
+    font-weight: 500;
+  }
+  
+  // Force override any Bootstrap navbar classes
+  &.navbar-dark, &.navbar-light {
+    .navbar-brand, .nav-link, .navbar-text {
+      color: var(--navbar-text) !important;
+    }
+  }
 }
 
-// Dark theme styles
-.dark-theme {
-  background-color: var(--bg-color) !important;
+// Enhanced active navigation link styling
+.navbar .nav-link {
+  padding: 0.5rem 1rem !important;
+  margin: 0 0.25rem !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.3s ease !important;
+  border: 2px solid transparent !important;
+  
+  &.active {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    border: 2px solid rgba(255, 255, 255, 0.5) !important;
+    font-weight: 700 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  
+  &:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  }
+}
+
+// Dark theme adjustments for active links
+[data-theme="dark"] .navbar .nav-link {
+  &.active {
+    background-color: rgba(240, 246, 252, 0.2) !important;
+    border: 2px solid rgba(240, 246, 252, 0.4) !important;
+    color: #f0f6fc !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  &:hover:not(.active) {
+    background-color: rgba(240, 246, 252, 0.1) !important;
+    border: 2px solid rgba(240, 246, 252, 0.2) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+// Navbar brand consistent styling
+.navbar-brand {
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  
+  i {
+    margin-right: 0.5rem !important;
+  }
+}
+
+// Make sure navbar stays consistent even with Bootstrap's bg-primary class
+.navbar.bg-primary {
+  background-color: var(--navbar-bg) !important;
+  
+  .navbar-brand, .nav-link, .navbar-text {
+    color: var(--navbar-text) !important;
+  }
+}
+
+// Override Bootstrap's navbar-dark and navbar-light classes completely
+.navbar-dark, .navbar-light {
+  background-color: var(--navbar-bg) !important;
+  
+  .navbar-brand {
+    color: var(--navbar-text) !important;
+    
+    &:hover, &:focus {
+      color: var(--navbar-text) !important;
+      opacity: 0.9;
+    }
+  }
+  
+  .navbar-nav .nav-link {
+    color: var(--navbar-text) !important;
+    
+    &:hover, &:focus {
+      color: var(--navbar-text) !important;
+      opacity: 0.8;
+    }
+    
+    &.active {
+      color: var(--navbar-text) !important;
+      font-weight: 500;
+    }
+  }
+  
+  .navbar-text {
+    color: var(--navbar-text) !important;
+  }
+  
+  .navbar-toggler {
+    border-color: var(--navbar-text) !important;
+  }
+}
+
+// Force all navbar elements to use theme colors regardless of Bootstrap classes
+.navbar {
+  // Force background color
+  background: var(--navbar-bg) !important;
+  background-color: var(--navbar-bg) !important;
+  
+  // Force all text elements to use navbar text color
+  *, *:before, *:after {
+    &.navbar-brand, &.nav-link, &.navbar-text, &.btn {
+      color: var(--navbar-text) !important;
+    }
+  }
+  
+  // Specific overrides for common elements
+  a, button, span, i {
+    color: var(--navbar-text) !important;
+  }
+  
+  // Override any remaining Bootstrap navbar styling
+  &.bg-primary, &.bg-dark, &.bg-light, &.bg-secondary {
+    background-color: var(--navbar-bg) !important;
+  }
+}
+
+// Aggressive navbar fix for light mode visibility
+.navbar.navbar-expand-lg.navbar-dark.bg-primary {
+  background-color: var(--navbar-bg) !important;
+  background: var(--navbar-bg) !important;
+  
+  .container {
+    .navbar-brand {
+      color: var(--navbar-text) !important;
+      
+      i {
+        color: var(--navbar-text) !important;
+      }
+    }
+    
+    .navbar-nav {
+      .nav-link {
+        color: var(--navbar-text) !important;
+        
+        i {
+          color: var(--navbar-text) !important;
+        }
+        
+        &:hover, &:focus {
+          color: var(--navbar-text) !important;
+          opacity: 0.8;
+        }
+        
+        &.active {
+          color: var(--navbar-text) !important;
+          font-weight: 500;
+        }
+      }
+    }
+    
+    .btn-outline-light {
+      color: var(--navbar-text) !important;
+      border-color: var(--navbar-text) !important;
+      
+      i {
+        color: var(--navbar-text) !important;
+      }
+      
+      &:hover, &:focus {
+        background-color: var(--navbar-text) !important;
+        color: var(--navbar-bg) !important;
+        
+        i {
+          color: var(--navbar-bg) !important;
+        }
+      }
+    }
+  }
+}
+
+// CRITICAL FIX: Force navbar visibility with absolute priority
+nav, .navbar, [class*="navbar"] {
+  background: #0d6efd !important;
+  background-color: #0d6efd !important;
+}
+
+nav *, .navbar *, [class*="navbar"] * {
+  color: white !important;
+}
+
+// Dark theme overrides
+[data-theme="dark"] nav, 
+[data-theme="dark"] .navbar, 
+[data-theme="dark"] [class*="navbar"] {
+  background: #21262d !important;
+  background-color: #21262d !important;
+}
+
+[data-theme="dark"] nav *, 
+[data-theme="dark"] .navbar *, 
+[data-theme="dark"] [class*="navbar"] * {
+  color: #f0f6fc !important;
+}
+
+// Navbar buttons styling (theme toggle and logout)
+.navbar .btn-outline-light {
+  margin-left: 0.5rem !important;
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 0.375rem !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  }
+}
+
+// Form controls
+.form-control, .form-select {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
   color: var(--text-color) !important;
   
-  .navbar {
-    background-color: #212529 !important;
-  }
-  
-  .card {
-    background-color: var(--card-bg) !important;
-    border-color: var(--border-color) !important;
+  &:focus {
+    background-color: var(--input-bg) !important;
+    border-color: var(--btn-primary) !important;
     color: var(--text-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--btn-primary), 0.25) !important;
   }
   
-  .form-control {
-    background-color: var(--card-bg) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-color) !important;
-  }
-  
-  .form-control:focus {
-    background-color: var(--card-bg) !important;
-    color: var(--text-color) !important;
-  }
-  
-  .text-muted {
-    color: #adb5bd !important;
-  }
-  
-  .bg-light {
-    background-color: var(--bg-color) !important;
+  &::placeholder {
+    color: var(--text-muted) !important;
   }
 }
 
-// Custom responsive utilities
-@media (max-width: 768px) {
-  .container {
-    padding-left: 15px;
-    padding-right: 15px;
+// Buttons
+.btn-primary {
+  background-color: var(--btn-primary) !important;
+  border-color: var(--btn-primary) !important;
+}
+
+.btn-secondary {
+  background-color: var(--btn-secondary) !important;
+  border-color: var(--btn-secondary) !important;
+}
+
+.btn-outline-secondary {
+  color: var(--btn-outline-secondary) !important;
+  border-color: var(--btn-outline-secondary) !important;
+  
+  &:hover {
+    background-color: var(--btn-outline-secondary) !important;
+    border-color: var(--btn-outline-secondary) !important;
   }
+}
+
+.btn-outline-light {
+  color: var(--navbar-text) !important;
+  border-color: var(--navbar-text) !important;
+  
+  &:hover {
+    background-color: var(--navbar-text) !important;
+    color: var(--navbar-bg) !important;
+  }
+}
+
+// Text utilities
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.text-primary {
+  color: var(--btn-primary) !important;
+}
+
+// Alerts
+.alert-info {
+  background-color: var(--alert-info-bg) !important;
+  border-color: var(--alert-info-border) !important;
+  color: var(--alert-info-text) !important;
+}
+
+// Spinners
+.spinner-border {
+  color: var(--btn-primary) !important;
+}
+
+// Blockquotes (for quotes)
+.blockquote {
+  color: var(--text-color) !important;
+  border-left: 4px solid var(--btn-primary);
+  padding-left: 1rem;
+}
+
+.blockquote-footer {
+  color: var(--text-muted) !important;
+}
+
+// Additional dark theme improvements
+.bg-light {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+// Ensure consistent text colors
+h1, h2, h3, h4, h5, h6, p, div, span {
+  color: var(--text-color) !important;
+}
+
+// Override Bootstrap default text colors
+.text-dark {
+  color: var(--text-color) !important;
+}
+
+// Ensure proper styling for common layout elements
+.row, .col, .col-md-6, .col-lg-4, .col-lg-6, [class*="col-"] {
+  color: var(--text-color) !important;
+}
+
+// Border utilities
+.border, .border-top, .border-bottom, .border-left, .border-right {
+  border-color: var(--border-color) !important;
+}
+
+// Fix specific Bootstrap overrides that might cause white-on-white issues
+.bg-white {
+  background-color: var(--bg-color) !important;
+}
+
+.text-black, .text-black-50 {
+  color: var(--text-color) !important;
+}
+
+// Force override any remaining Bootstrap text colors
+.text-body {
+  color: var(--text-color) !important;
+}
+
+// Make sure all Bootstrap utility classes use theme colors
+.bg-body {
+  background-color: var(--bg-color) !important;
+}
+
+// Ensure display classes get proper colors
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+  color: var(--text-color) !important;
+}
+
+// Component-specific styling to ensure proper theme coverage
+app-all-quotes, app-all-books, app-books, app-quotes {
+  display: block;
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  min-height: 100vh;
+}
+
+// Ensure Angular router outlet content gets proper styling
+router-outlet + * {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+// Quote-specific styling improvements for dark mode
+.quote-card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-color) !important;
+  
+  .blockquote p {
+    color: var(--text-color) !important;
+  }
+  
+  .blockquote-footer {
+    color: var(--text-muted) !important;
+  }
+  
+  .quote-details {
+    border-color: var(--border-color) !important;
+  }
+}
+
+// Book card styling
+.book-card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-color) !important;
+  
+  .card-title {
+    color: var(--btn-primary) !important;
+  }
+  
+  .card-subtitle {
+    color: var(--text-muted) !important;
+  }
+}
+
+// Cross-browser cache busting and compatibility
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+// Ensure proper CSS custom property support across browsers
+:root, [data-theme="dark"] {
+  /* Force browsers to recognize CSS variables */
+  --force-repaint: 0;
+}
+
+// Browser-specific fixes for theme application
+@-moz-document url-prefix() {
+  /* Firefox-specific fixes */
+  [data-theme="dark"] {
+    background: var(--bg-color) !important;
+    color: var(--text-color) !important;
+  }
+}
+
+// WebKit/Chrome specific
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  [data-theme="dark"] {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+  }
+}
+
+// Smooth transitions for all themed elements
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+// FINAL OVERRIDE - This should definitely work
+// Use maximum specificity to override everything
+body nav.navbar.navbar-expand-lg.navbar-dark.bg-primary,
+body .navbar.navbar-expand-lg.navbar-dark.bg-primary,
+nav.navbar,
+.navbar {
+  background-color: #0d6efd !important;
+  background: #0d6efd !important;
+}
+
+body nav.navbar.navbar-expand-lg.navbar-dark.bg-primary *,
+body .navbar.navbar-expand-lg.navbar-dark.bg-primary *,
+nav.navbar *,
+.navbar * {
+  color: #ffffff !important;
+}
+
+// Dark theme final override
+[data-theme="dark"] body nav.navbar,
+[data-theme="dark"] body .navbar,
+[data-theme="dark"] nav.navbar,
+[data-theme="dark"] .navbar {
+  background-color: #21262d !important;
+  background: #21262d !important;
+}
+
+[data-theme="dark"] body nav.navbar *,
+[data-theme="dark"] body .navbar *,
+[data-theme="dark"] nav.navbar *,
+[data-theme="dark"] .navbar * {
+  color: #f0f6fc !important;
+}
+
+// Force navbar to have consistent background with no gaps or white spaces
+.navbar {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0.5rem 0 !important;
+  
+  .container, .container-fluid {
+    background-color: inherit !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    margin: 0 !important;
+  }
+  
+  // Remove any potential white gaps
+  &, & * {
+    box-sizing: border-box !important;
+  }
+}
+
+// Aggressive fix for navbar white gaps - apply background to all elements
+.navbar-expand-lg, .navbar-dark, .bg-primary, .bg-success {
+  background-color: inherit !important;
+  
+  &::before, &::after {
+    content: none !important;
+  }
+}
+
+// Ensure body and html don't interfere with navbar
+body, html {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+// Remove any Bootstrap margins that might cause gaps
+.navbar-nav {
+  margin: 0 !important;
+}
+
+.ms-auto {
+  margin-left: auto !important;
+  background-color: inherit !important;
 }
